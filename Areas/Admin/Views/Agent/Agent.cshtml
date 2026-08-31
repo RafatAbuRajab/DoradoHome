@@ -1,0 +1,55 @@
+﻿@model List<Employee>
+@inject RoleManager<AppRole> roleManager
+@inject UserManager<AppUser> userManager
+@{
+	ViewData["Title"] = "Agents";
+}
+<div class="page-head">
+	<div>
+		<h1>Agents</h1>
+		<div class="breadcrumb-plain">
+			<a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><span class="current">Agents</span>
+		</div>
+	</div>
+</div>
+
+
+<div class="hl-card mb-4">
+	<div class="hl-card-head flex-wrap">
+		<h2>Real Estate Agents</h2>
+		<a asp-action="AddAgent" asp-controller="Agent" class="btn btn-hl-primary btn-sm" ><span class="icon-user-plus mr-1"></span>Add New Agent</a>
+	</div>
+</div>
+
+<div class="row">
+	@foreach (var item in Model)
+	{
+		var user = await userManager.FindByEmailAsync(item.Email);
+		var EmployeeRole = await userManager.IsInRoleAsync(user, "Agent");
+		if (EmployeeRole)
+		{
+			<div class="col-lg-4 col-md-6 mb-4">
+
+
+
+				<div class="hl-card h-100">
+					<div class="hl-card-body text-center">
+						<img src="@item.Img" class="avatar-md mb-3" style="width:72px;height:72px;">
+						<h5 class="font-weight-bold mb-0">@item.FirstName</h5>
+						<div class="row-sub mb-3">Agent</div>
+						<div class="row-sub mb-1"><span class="icon-envelope-o mr-1"></span>@item.Email</div>
+						<div class="row-sub mb-3"><span class="icon-phone2 mr-1"></span>@item.Phone</div>
+						
+						<div class="row-actions justify-content-center">
+							<a asp-action="ViewAgent" asp-controller="Agent" asp-route-id="@item.Id" title="View"><span class="icon-eye"></span></a>
+							<a asp-action="EditAgent" asp-controller="Agent" asp-route-editagent="@item.Id" title="Edit"><span class="icon-pencil"></span></a>
+							<a asp-action="DeleteAgent" asp-controller="Agent" asp-route-id="@item.Id" class="danger js-confirm-delete" title="Remove"><span class="icon-trash-o"></span></a>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+		}
+	}
+</div>

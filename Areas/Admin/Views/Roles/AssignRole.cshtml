@@ -1,0 +1,36 @@
+﻿@using DoradoHome.Data
+@model AppRole
+@{
+    ViewData["Title"] = "Assign Role";
+}
+<div class="page-head">
+    <div>
+        <h1>Assign Role</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><a asp-action="Roles" asp-controller="Roles">Roles</a><span class="sep">/</span><span class="current">Assign Role</span>
+        </div>
+    </div>
+</div>
+
+<form asp-action="AssignRole" asp-controller="Roles" asp-area="Admin">
+    <div asp-validation-summary="All"></div>
+    <input asp-for="Id" type="hidden" />
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="hl-card" style="text-align:center">
+                <div class="hl-card-head"><h2>Status</h2></div>
+                <div class="hl-card-body">
+                    <div class="form-group">
+                        <label>Assign to Existing Users</label>
+                        <select asp-items="@ViewBag.Users" name="email" class="form-control">
+                            <option selected>Don't assign yet</option>
+                        </select>
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-hl-primary btn-block mb-2">Assign Role</button>
+                    <a asp-action="Roles" asp-controller="Roles" class="btn btn-hl-outline btn-block">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

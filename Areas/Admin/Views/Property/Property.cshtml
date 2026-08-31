@@ -1,0 +1,100 @@
+﻿@model List<Property>
+@inject AppDbContext db
+@{
+    ViewData["Title"] = "Properties";
+}
+<div class="page-head">
+    <div>
+        <h1>Properties</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><span class="current">Properties</span>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mb-4">
+    <div class="col-sm-6 col-xl-3 mb-3 mb-xl-0">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-1"><span class="icon-building"></span></span>
+            <div><div class="stat-value">@Model.Count</div><div class="stat-label">Total Properties</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-3 mb-xl-0">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-3"><span class="icon-check-circle"></span></span>
+            <div><div class="stat-value">@Model.Where(p => p.Status == PropertyStatus.Active).Count()</div><div class="stat-label">Active</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-4"><span class="icon-hourglass-half"></span></span>
+            <div><div class="stat-value">@Model.Where(p => p.Status == PropertyStatus.Pending).Count()</div><div class="stat-label">Pending</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-2"><span class="icon-tag"></span></span>
+            <div><div class="stat-value">@Model.Where(p => p.Status == PropertyStatus.Sold).Count()</div><div class="stat-label">Sold / Rented</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="hl-card">
+    <div class="hl-card-head flex-wrap">
+        <h2>All Properties</h2>
+        <a asp-action="AddProp" asp-controller="Property" class="btn btn-hl-primary btn-sm"><span class="icon-plus mr-1"></span>Add New Property</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table hl-table">
+            <thead>
+                <tr>
+                    <th style="width:36px;"><input type="checkbox" class="js-select-all"></th>
+                    <th>Property</th>
+                    <th>Offer</th>
+                    <th>Specs</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th style="width:120px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var propertyimages = db.PropertyImages.Where(x => x.PropertyId == item.Id).Select(x => x.ImageUrl).FirstOrDefault();
+                    
+                    <tr>
+                        <td><input type="checkbox" class="js-row-select"></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="@propertyimages" class="row-thumb mr-3">
+                                <div>
+                                    <div class="row-title">@item.Name</div>
+                                    <div class="row-sub"><span class="icon-room"></span> @item.Address, @item.State @item.ZipCode</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-@(item.OfferType == OfferType.ForRent ? "danger" : "primary") font-weight-normal px-2 py-1">@item.OfferType</span></td>
+                        <td>@item.BedRooms bd &middot; @item.BathRooms ba &middot; @item.Area sqft</td>
+                        <td><strong>$@item.Price.ToString("#,##0.##")</strong></td>
+                        <td><span class="status-pill @(item.Status == PropertyStatus.Active ? "active" : 
+                                                       item.Status == PropertyStatus.Pending ? "pending" :
+                                                       item.Status == PropertyStatus.Sold ? "sold" : "rejected")">
+                                                       @(item.Status == PropertyStatus.Active ? "Active" : 
+                                                       item.Status == PropertyStatus.Pending ? "Pending" :
+                                                       item.Status == PropertyStatus.Sold ? "Sold" : "Rejected")
+                             </span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <a asp-action="ViewProp" asp-controller="Property" asp-route-id="@item.Id" title="View"><span class="icon-eye"></span></a>
+                                <a asp-action="EditProp" asp-controller="Property" asp-route-id="@item.Id" title="Edit"><span class="icon-pencil"></span></a>
+                                <a asp-action="DeleteProp" asp-controller="Property" asp-route-delid="@item.Id" class="danger js-confirm-delete" title="Delete"><span class="icon-trash-o"></span></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

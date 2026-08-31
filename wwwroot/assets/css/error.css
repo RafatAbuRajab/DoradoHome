@@ -1,0 +1,44 @@
+/* Error pages (404 / 403 / 500 / 503) styling */
+.error-page-cover .error-code {
+  font-family: "Roboto Mono", monospace;
+  font-weight: 700;
+  font-size: 8rem;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: .05em;
+  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.35);
+}
+
+.error-page-cover .error-icon {
+  font-size: 3rem;
+  color: #f23a2e;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.error-page-cover h1.error-title {
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: 1.7rem;
+  margin-top: .5rem;
+}
+
+.error-page-cover p.error-text {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 560px;
+  margin: 0 auto 2rem auto;
+}
+
+.error-page-cover .error-actions .btn {
+  margin: 0 .4rem 1rem .4rem;
+}
+
+@media (max-width: 576px) {
+  .error-page-cover .error-code {
+    font-size: 5rem;
+  }
+}

@@ -1,0 +1,83 @@
+﻿@model List<Appointment>
+@{
+    ViewData["Title"] = "Appointments";
+}
+<div class="page-head">
+    <div>
+        <h1>Appointments</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><span class="current">Appointments</span>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mb-4">
+    <div class="col-sm-6 col-xl-3 mb-3 mb-xl-0">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-1"><span class="icon-calendar"></span></span>
+            <div><div class="stat-value">@Model.Count</div><div class="stat-label">Appointments</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-3 mb-xl-0">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-3"><span class="icon-check-circle"></span></span>
+            <div><div class="stat-value">@Model.Where(x => x.Status == AppointmentStatus.Confirmed).Select(x => x.Status).Count()</div><div class="stat-label">Confirmed</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-4"><span class="icon-hourglass-half"></span></span>
+            <div><div class="stat-value">@Model.Where(x => x.Status == AppointmentStatus.Pending).Select(x => x.Status).Count()</div><div class="stat-label">Pending</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-2"><span class="icon-close2"></span></span>
+            <div><div class="stat-value">@Model.Where(x => x.Status == AppointmentStatus.Rejected).Select(x => x.Status).Count()</div><div class="stat-label">Rejected</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex align-items-start bg-white rounded p-3 mb-4" style="border:1px solid var(--hl-border);">
+    <span class="icon-info-circle text-muted mr-3" style="font-size:1.1rem;margin-top:.1rem;"></span>
+    <div class="row-sub mb-0">This is a company-wide <strong>oversight view</strong>. Accepting or rejecting an appointment request is handled by the assigned agent from their own dashboard &mdash; admins can reschedule or cancel an appointment administratively, but can't confirm one on an agent's behalf.</div>
+</div>
+
+<div class="hl-card">
+    <div class="hl-card-head flex-wrap">
+        <h2>Property Viewing Appointments</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table hl-table">
+            <thead><tr><th>Client</th><th>Property</th><th>Date &amp; Time</th><th>Agent</th><th>Status</th><th style="width:120px;">Actions</th></tr></thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><div class="d-flex align-items-center"><img src="@item.Client?.Img" class="avatar-sm mr-3"><div class="row-title">@item.Client?.FirstName @item.Client?.LastName</div></div></td>
+                        <td>@item.Property?.Name</td>
+                        <td>@item.Date.ToString("d")<div class="row-sub">@item.Time.ToString("t")</div></td>
+                        <td>@item.Employee?.FirstName @item.Employee?.LastName</td>
+                        <td>
+                            <span class="status-pill @(item.Status == AppointmentStatus.Confirmed ? "confirmed" :
+                                                       item.Status == AppointmentStatus.Pending ? "pending" :
+                                                       item.Status == AppointmentStatus.Rejected ? "rejected" : "closed")">
+                                                     @(item.Status == AppointmentStatus.Confirmed ? "Confirmed" :
+                                                       item.Status == AppointmentStatus.Pending ? "Pending" :
+                                                       item.Status == AppointmentStatus.Rejected ? "Rejected" :
+                                                       item.Status == AppointmentStatus.Closed ? "Closed" : "Pending Confirmation")
+                        </span>
+                    </td>
+                        <td>
+                            <div class="row-actions">
+                                <a asp-action="Reschedule" asp-controller="Appointment" asp-route-id="@item.Id" title="Reschedule"><span class="icon-calendar"></span></a>
+                                <a asp-action="Delete" asp-controller="Appointment" asp-route-id="@item.Id" class="danger js-confirm-delete" title="Cancel (Admin Override)"><span class="icon-close"></span></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

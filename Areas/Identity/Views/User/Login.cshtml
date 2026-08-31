@@ -1,0 +1,44 @@
+﻿@using DoradoHome.Areas.Identity.Models
+@model LoginVM
+@{
+    ViewData["Title"] = "Login";
+}
+<div class="auth-form-side">
+    <div class="auth-box">
+        <h2 class="font-weight-bold mb-1">Welcome back</h2>
+        <p class="row-sub mb-4">Log in to continue to your dashboard.</p>
+        <div class="form-group">
+            @* <label>Login With</label> *@
+            <div class="d-flex" style="gap:.6rem;" id="roleTabs">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                @* <button type="button" class="btn btn-hl-primary role-btn flex-fill" data-role="client">Client</button>
+                <button type="button" class="btn btn-hl-outline role-btn flex-fill" data-role="agent">Agent</button>
+                <button type="button" class="btn btn-hl-outline role-btn flex-fill" data-role="admin">Admin</button> *@
+            </div>
+        </div>
+
+        <form asp-action="Login" asp-controller="User" asp-area="Identity">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+            <input type="hidden" name="role" id="roleInput" value="client">
+            <div class="form-group">
+                <label asp-for="Email">Email Address</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="you@homeland.com">
+            </div>
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+            </div>
+            <div class="form-group d-flex justify-content-between align-items-center">
+                <div class="custom-control custom-checkbox">
+                    <input asp-for="RememberMe" type="checkbox" class="custom-control-input">
+                    <label asp-for="RememberMe" class="custom-control-label" style="font-size:.85rem;">Remember me</label>
+                </div>
+                <a asp-action="ForgotPassword" asp-controller="User" style="font-size:.85rem;font-weight:700;">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-hl-primary btn-block">Log In</button>
+        </form>
+
+        <p class="text-center mt-4 row-sub mb-0">Don't have an account? <a asp-action="Register" asp-controller="User" asp-area="Identity" style="font-weight:700;">Sign up</a></p>
+    </div>
+</div>

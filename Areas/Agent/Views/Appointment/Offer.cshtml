@@ -1,0 +1,108 @@
+﻿@model Offer
+@{
+    ViewData["Title"] = "Offer";
+}
+<div class="page-head">
+    <div>
+        <h1>Create Offer</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Index" asp-controller="Home" asp-area="">Home</a><span class="sep">/</span><a asp-action="Appointments" asp-controller="Appointment">Appointments</a><span class="sep">/</span><span class="current">Create Offer</span>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex align-items-start bg-white rounded p-3 mb-4" style="border:1px solid var(--hl-border);">
+    <span class="icon-info-circle text-muted mr-3" style="font-size:1.1rem;margin-top:.1rem;"></span>
+    <div class="row-sub mb-0">Appointment accepted. Once you send this offer, the client will see it on their dashboard and can accept or decline it. An accepted offer automatically becomes a closed sale or an active rental.</div>
+</div>
+<div asp-validation-summary="ModelOnly"></div>
+<form asp-action="Offer" asp-controller="Appointment" id="offerForm">
+    @Html.AntiForgeryToken()
+    <input asp-for="AppointmentId" type="hidden">
+
+    <div class="row">
+        <div class="col-lg-8">
+            @if (Model.Property?.OfferType == OfferType.ForSale)
+            {
+                <div class="hl-card mb-4" id="saleFields">
+                    <div class="hl-card-head"><h2>Sale Terms</h2></div>
+                    <div class="hl-card-body">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label asp-for="SalePrice">Sale Price (USD)</label>
+                                <input asp-for="SalePrice" type="text" class="form-control">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label asp-for="ClosingDate">Proposed Closing Date</label>
+                                <input asp-for="ClosingDate" type="date" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.Property?.OfferType == OfferType.ForRent)
+            {
+                <div class="hl-card mb-4" id="rentalFields">
+                    <div class="hl-card-head"><h2>Rental Terms</h2></div>
+                <div class="hl-card-body">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label asp-for="MonthlyRent">Monthly Rent (USD)</label>
+                            <input asp-for="MonthlyRent" type="text" class="form-control">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label asp-for="LeaseStart">Lease Start Date</label>
+                            <input asp-for="LeaseStart" type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label asp-for="LeaseTerm">Lease Term</label>
+                        <input asp-for="LeaseTerm" class="form-control" style="max-width:220px;"/>
+                    </div>
+                </div>
+            </div>
+            }
+            <div class="hl-card">
+                <div class="hl-card-head"><h2>Terms &amp; Notes</h2></div>
+                <div class="hl-card-body">
+                    <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Any conditions, contingencies, or notes for the client..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="hl-card mb-4">
+                <div class="hl-card-head"><h2>Client</h2></div>
+                <div class="hl-card-body">
+                    <div class="d-flex align-items-center">
+                        <img src="@Model.Client?.Img" class="avatar-md mr-3">
+                        <div>
+                            <div class="row-title">@Model.Client?.FullName</div>
+                            <div class="row-sub">@Model.Client?.Email</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hl-card mb-4">
+                <div class="hl-card-head"><h2>Property</h2></div>
+                <div class="hl-card-body">
+                    <div class="d-flex align-items-center">
+                        <img src="@Model.Property?.Img" class="row-thumb mr-3">
+                        <div>
+                            <div class="row-title">@Model.Property?.Name</div>
+                            <div class="row-sub">@Model.Property?.City, @Model.Property?.State</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hl-card">
+                <div class="hl-card-body">
+                    <button type="submit" class="btn btn-hl-primary btn-block mb-2">Send Offer to Client</button>
+                    <a href="appointments.html" class="btn btn-hl-outline btn-block">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

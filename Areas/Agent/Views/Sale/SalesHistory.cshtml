@@ -1,0 +1,38 @@
+﻿@model List<Sale>
+@{
+    ViewData["Title"] = "Sales";
+}
+<div class="page-head">
+    <div>
+        <h1>Sales History</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Index" asp-controller="Home" asp-area="">Home</a><span class="sep">/</span><a asp-action="AgentDashboard" asp-controller="Dashboard">Dashboard</a><span class="sep">/</span><span class="current">Sales</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="hl-card">
+            <div class="hl-card-head">
+                <h2>Who Bought What</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table hl-table">
+                    <thead><tr><th>Property</th><th>Buyer</th><th>Sale Price</th><th>Date</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><div class="d-flex align-items-center"><img src="@item.Property?.Img" class="row-thumb mr-3"><div class="row-title">@item.Property?.Name</div></div></td>
+                                <td><div class="d-flex align-items-center"><img src="@item.Client?.Img" class="avatar-sm mr-2">@item.Client?.FullName</div></td>
+                                <td>$@item.Property?.Price.ToString("##,0")</td>
+                                <td>@item.SaleDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

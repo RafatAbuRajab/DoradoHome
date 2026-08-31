@@ -1,0 +1,64 @@
+﻿@model Appointment
+@{
+    ViewData["Title"] = "Appointment Confirmed";
+}
+<div class="site-blocks-cover inner-page-cover overlay" style="background-image: url(@Model.Property?.Img);" data-aos="fade">
+    <div class="container">
+        <div class="row align-items-center justify-content-center text-center">
+            <div class="col-md-10">
+                <span class="d-inline-block text-white px-3 mb-3 property-offer-type rounded">Appointment Requested</span>
+                <h1 class="mb-2">@Model.Property?.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="site-section site-section-sm">
+    <div class="container">
+
+        <div class="row justify-content-center text-center mb-5">
+            <div class="col-md-8">
+                <span class="success-icon"><span class="icon-check"></span></span>
+                <h2 class="mb-2">Thank you, @Model.Client?.FirstName!</h2>
+                <p class="text-muted mb-1">Your appointment request for <strong class="text-black">@Model.Property?.Name</strong> has been received.</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="bg-white widget border rounded mb-4">
+                    <h3 class="h5 text-black widget-title mb-3">What happens next</h3>
+                    <ul class="next-steps-list">
+                        <li>
+                            <span class="step-num">1</span>
+                            <div>
+                                <strong class="d-block text-black">Agent Confirmation</strong>
+                                <span class="text-muted" style="font-size:.88rem;">@Model.Employee?.FullName will confirm your preferred date and time within 24 hours.</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-num">2</span>
+                            <div>
+                                <strong class="d-block text-black">Appointment Reminder</strong>
+                                <span class="text-muted" style="font-size:.88rem;">You'll get an email and SMS reminder before your scheduled visit or call.</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-num">3</span>
+                            <div>
+                                <strong class="d-block text-black">Next Steps</strong>
+                                <span class="text-muted" style="font-size:.88rem;">After your viewing, your agent will help with an offer or rental application if you'd like to move forward.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="text-center">
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-primary py-3 px-4 mr-2">Back to Home</a>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-primary py-3 px-4">Browse More Properties</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

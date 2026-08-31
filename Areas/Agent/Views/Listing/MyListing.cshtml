@@ -1,0 +1,65 @@
+﻿@model List<Property>
+@{
+    ViewData["Title"] = "My Listings";
+}
+<div class="page-head">
+    <div>
+        <h1>My Listings</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Index" asp-controller="Home" asp-area="">Home</a><span class="sep">/</span><a asp-action="AgentDashboard" asp-controller="Dashboard">Dashboard</a><span class="sep">/</span><span class="current">My Listings</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="hl-card">
+            <div class="hl-card-head">
+                <h2>All Listings</h2>
+                <a asp-action="ListProp" asp-controller="Listing" class="btn-hl-outline btn btn-sm">Add Listing</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table hl-table">
+                    <thead><tr><th>Property</th><th>Price</th><th>Status</th><th>Listed</th><th>Action</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><div class="d-flex align-items-center">
+                                        <img src="@item.Img" class="row-thumb mr-3">
+                                        <div>
+                                            <div class="row-title">@item.Name</div>
+                                            <div class="row-sub">@item.City, @item.State</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$@item.Price.ToString("##,0")</td>
+                                <td>
+                                    <span class="status-pill @(item.Status == PropertyStatus.Active ? "active" :
+                                                               item.Status == PropertyStatus.Pending ? "pending" :
+                                                               item.Status == PropertyStatus.Sold ? "sold" : "rejected")">
+                                                             @(item.Status == PropertyStatus.Active ? "Available" :
+                                                               item.Status == PropertyStatus.Pending ? "Pending" :
+                                                              (item.Status == PropertyStatus.Sold && item.IsRented) ? "Rented" :
+                                                               item.Status == PropertyStatus.Sold ? "Sold" : "Rejected")
+                                    </span>
+                                </td>
+                                <td>@item.ListingDate</td>
+                                <td>
+                                    @if (item.Status == PropertyStatus.Active && item.OfferType == OfferType.ForRent && item.IsRented == false)
+                                    {
+                                        <a asp-action="RentProp" asp-controller="Listing" asp-route-id="@item.Id" class="btn btn-hl-outline btn-sm"><span class="icon-key mr-1"></span>Rent</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="row-sub">&mdash;</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

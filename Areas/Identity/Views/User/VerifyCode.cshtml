@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Verify Code";
+    var email = Context.Session.GetString("ResetEmail");
+}
+<div class="auth-form-side">
+<div class="auth-box text-center">
+    <span class="stat-icon bg-3 mb-4" style="width:72px;height:72px;font-size:2rem;border-radius:50%;display:inline-flex;"><span class="icon-envelope-o"></span></span>
+    <h2 class="font-weight-bold mb-2">Enter verification code</h2>
+    <p class="row-sub mb-4">We've sent a 6-digit code to <strong class="text-dark">@email</strong>. Enter it below to continue.</p>
+    <div asp-validation-summary="All"></div>
+    <form asp-action="VerifyCode" asp-controller="User" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <div class="otp-row mb-2">
+                <input type="text" name="code1" inputmode="text" maxlength="1" class="js-otp-input" autofocus>
+                <input type="text" name="code2" inputmode="text" maxlength="1" class="js-otp-input">
+                <input type="text" name="code3" inputmode="text" maxlength="1" class="js-otp-input">
+                <input type="text" name="code4" inputmode="text" maxlength="1" class="js-otp-input">
+                <input type="text" name="code5" inputmode="text" maxlength="1" class="js-otp-input">
+                <input type="text" name="code6" inputmode="text" maxlength="1" class="js-otp-input">
+            </div>
+            <span class="text-danger">
+                @Html.ValidationMessage("code")
+            </span>
+        </div>
+        <button type="submit" class="btn btn-hl-primary btn-block">Verify Code</button>
+    </form>
+
+    <p class="row-sub mt-4 mb-0" style="font-size:.85rem;">
+        Didn't get a code? <a asp-action="ForgotPassword" asp-controller="User" style="font-weight:700;">Resend code</a>
+    </p>
+
+    <p class="text-center mt-4 mb-0"><a asp-action="Login" asp-controller="User" class="row-sub" style="font-weight:700;"><span class="icon-arrow-left mr-1"></span>Back to Log In</a></p>
+</div>
+</div>
+
+<script>
+    (function () {
+      var inputs = document.querySelectorAll(".js-otp-input");
+      inputs.forEach(function (input, index) {
+        input.addEventListener("input", function () {
+        input.value = input.value.replace(/[^a-zA-Z0-9]/g, "");
+          if (input.value && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+        });
+        input.addEventListener("keydown", function (e) {
+          if (e.key === "Backspace" && !input.value && index > 0) {
+            inputs[index - 1].focus();
+          }
+        });
+      });
+    })();
+</script>

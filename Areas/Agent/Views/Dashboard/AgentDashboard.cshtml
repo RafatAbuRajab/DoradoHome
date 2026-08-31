@@ -1,0 +1,203 @@
+﻿@model List<Property>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="page-head">
+    <div>
+        <h1>Welcome back, @Model.Select(x => x.Employee.FullName).FirstOrDefault()</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Index" asp-controller="Home" asp-area="">Home</a><span class="sep">/</span><a asp-action="AgentDashboard" asp-controller="Dashboard">Dashboard</a><span class="sep">/</span><span class="current">Overview</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-1"><span class="icon-building"></span></span>
+            <div>
+                <div class="stat-value">@Model.Count</div>
+                <div class="stat-label">My Listings</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-3"><span class="icon-check-circle"></span></span>
+            <div>
+                <div class="stat-value">@Model.Where(x => x.IsSold).Count()</div>
+                <div class="stat-label">Properties Sold</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-2"><span class="icon-calendar"></span></span>
+            <div>
+                <div class="stat-value">@Model.Where(x => x.IsRented).Count()</div>
+                <div class="stat-label">Active Rentals</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-4"><span class="icon-usd"></span></span>
+            <div>
+                @{
+                    decimal sales = 0, rentals = 0, sum = 0;
+                    foreach(var item in Model)
+                    {
+                        if(item.Status == PropertyStatus.Sold)
+                        {
+                            sales += item.Price;
+                        }
+                        foreach(var rent in item.Rentals)
+                        {
+                            if(rent.IsRented)
+                            {
+                                rentals += rent.MonthlyRentPrice;
+                            }
+                        }
+                    }
+                    sales *= 0.01m;
+                    rentals *= 0.1m;
+                    sum = sales + rentals;
+                }
+                <div class="stat-value">$@sum.ToString("##,0")</div>
+                <div class="stat-label">Commission (YTD)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>My Listings</h2>
+                <a asp-action="MyListing" asp-controller="Listing" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table hl-table">
+                    <thead><tr><th>Property</th><th>Price</th><th>Status</th><th>Listed</th><th>Action</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><div class="d-flex align-items-center"><img src="@item.Img" class="row-thumb mr-3"><div><div class="row-title">@item.Name</div><div class="row-sub">@item.City, @item.State</div></div></div></td>
+                                <td>$@item.Price.ToString("##,0")</td>
+                                <td>
+                                    <span class="status-pill @(item.Status == PropertyStatus.Active ? "active" :
+                                                               item.Status == PropertyStatus.Pending ? "pending" :
+                                                               item.Status == PropertyStatus.Sold ? "sold" : "rejected")">
+                                                             @(item.Status == PropertyStatus.Active ? "Active" :
+                                                               item.Status == PropertyStatus.Pending ? "Pending" :
+                                                               item.Status == PropertyStatus.Sold ? "Sold" : "Rejected")
+                                    </span>
+                                </td>
+                                <td>@item.ListingDate</td>
+                                <td><span class="row-sub">&mdash;</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>Upcoming Appointments
+                    @{
+                        var PendingAppointments = Model.Sum(x => x.Appointments.Count(x => x.Status == AppointmentStatus.Pending));
+                    }
+                    @if (PendingAppointments >= 1)
+                    {
+                        <span class="badge badge-danger">@PendingAppointments need response</span>
+                    }    
+                </h2>
+                <a asp-action="Appointments" asp-controller="Appointment" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var item in Model)
+                {
+                    foreach(var Appointment in item.Appointments)
+                    {
+                        if(Appointment.Status == AppointmentStatus.Pending)
+                        {
+                        <div class="d-flex py-3" style="border-bottom:1px solid var(--hl-border);">
+                            <img src="@Appointment.Client?.Img" class="avatar-md mr-3">
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between">
+                                    <strong style="font-size:.9rem;">@Appointment.Client?.FullName</strong>
+                                    <span class="row-sub">@Appointment.Date, @Appointment.Time</span>
+                                </div>
+                                <div class="row-sub">@Appointment.Notes</div>
+                            </div>
+                        </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>Sales History</h2>
+                <a asp-action="SalesHistory" asp-controller="Sale" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var item in Model)
+                {
+                    foreach(var Sales in item.Sales)
+                    {
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="@Sales.Property?.Img" class="row-thumb mr-3">
+                        <div class="flex-grow-1">
+                            <div class="row-title">@Sales.Property?.Name</div>
+                            <div class="row-sub">Sold to @Sales.Client?.FullName &middot; $@Sales.Property?.Price.ToString("##,0")</div>
+                        </div>
+                    </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>Rentals Under Management</h2>
+                <a asp-action="Rentals" asp-controller="Rental" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var item in Model)
+                {
+                    foreach (var Rentals in item.Rentals.Where(x => x.EmployeeId == item.EmployeeId && x.IsActive))
+                    {
+                        <div class="lease-row">
+                            <img src="@Rentals.Property?.Img" class="row-thumb lease-thumb">
+                            <div class="lease-info">
+                                <div class="row-title">@Rentals.Property?.Name</div>
+                                <div class="row-sub">Tenant: @Rentals.Client?.FullName &middot; $@Rentals.MonthlyRentPrice.ToString("##,0")/mo</div>
+                            </div>
+                            <div class="lease-progress-wrap">
+                                <span class="row-sub">@((Rentals.LeaseEndDate - DateTime.Today).Days) days left</span>
+                            </div>
+                                <span class="status-pill @(Rentals.LeaseStatus == LeaseStatus.Active ? "active" :
+                                                           Rentals.LeaseStatus == LeaseStatus.EndingSoon ? "rejected" :
+                                                           Rentals.LeaseStatus == LeaseStatus.Expired ? "sold" : "sold")">
+                                                         @(Rentals.LeaseStatus == LeaseStatus.Active ? "Active" :
+                                                           Rentals.LeaseStatus == LeaseStatus.EndingSoon ? "Ending Soon" :
+                                                           Rentals.LeaseStatus == LeaseStatus.Expired ? "Expired" : "Ended")
+                                </span>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

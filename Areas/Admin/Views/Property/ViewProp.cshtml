@@ -1,0 +1,96 @@
+﻿@model Property
+@inject AppDbContext db
+@{
+    ViewData["Title"] = "View Property";
+}
+<div class="page-head">
+    <div>
+        <h1>@Model.Name</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><a asp-action="Property" asp-controller="Property">Properties</a><span class="sep">/</span><span class="current">@Model.Name</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="hl-card mb-4">
+            @{var propertyimages = db.PropertyImages.Where(x => x.PropertyId == Model.Id).Select(x => x.ImageUrl).FirstOrDefault();}
+            <img src="@propertyimages" style="width:100%;max-height:340px;object-fit:cover;border-radius:14px 14px 0 0;">
+            <div class="hl-card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+                    <div>
+                        <span class="badge badge-danger font-weight-normal px-2 py-1 mb-2 d-inline-block">@Model.OfferType</span>
+                        <div class="row-sub"><span class="icon-room mr-1"></span>@Model.City, @Model.State @Model.ZipCode</div>
+                    </div>
+                    <strong class="h3 mb-0" style="color:var(--hl-primary);">$@Model.Price.ToString("#,##0.##")</strong>
+                </div>
+
+                <div class="row text-center py-3" style="border-top:1px solid var(--hl-border);border-bottom:1px solid var(--hl-border);">
+                    <div class="col-4">
+                        <div class="row-title">@Model.BedRooms</div>
+                        <div class="row-sub">Beds</div>
+                    </div>
+                    <div class="col-4" style="border-left:1px solid var(--hl-border);border-right:1px solid var(--hl-border);">
+                        <div class="row-title">@Model.BathRooms</div>
+                        <div class="row-sub">Baths</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row-title">@Model.Area</div>
+                        <div class="row-sub">Sq Ft</div>
+                    </div>
+                </div>
+
+                <h3 class="h6 font-weight-bold mt-4 mb-2">Description</h3>
+                <p class="row-sub mb-0">@Model.Description</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="hl-card mb-4">
+            <div class="hl-card-head"><h2>Status</h2></div>
+            <div class="hl-card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="row-sub">Listing Status</span>
+                    <span class="status-pill @(Model.Status == PropertyStatus.Active ? "active" : 
+                                               Model.Status == PropertyStatus.Pending ? "pending" :
+                                               Model.Status == PropertyStatus.Sold ? "sold" : "rejected")">
+                                               @(Model.Status == PropertyStatus.Active ? "Active" : 
+                                               Model.Status == PropertyStatus.Pending ? "Pending" :
+                                               Model.Status == PropertyStatus.Sold ? "Sold" : "Rejected")
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="row-sub">Home Type</span>
+                    <strong>@Model.PropertyType</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="row-sub">Year Built</span>
+                    <strong>@Model.YearBuilt</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="row-sub">Listed On</span>
+                    <strong>@Model.ListingDate</strong>
+                </div>
+            </div>
+        </div>
+        @{
+            var agentId = Model.EmployeeId;
+            var agent = db.Employees.FindAsync(agentId);
+        }
+        <div class="hl-card">
+            <div class="hl-card-head"><h2>Listing Agent</h2></div>
+            <div class="hl-card-body">
+                <div class="d-flex align-items-center">
+                    <img src="@agent.Result.Img" class="avatar-md mr-3">
+                    <div>
+                        <div class="row-title">@agent.Result.FirstName  @agent.Result.LastName</div>
+                        <div class="row-sub">Agent</div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>

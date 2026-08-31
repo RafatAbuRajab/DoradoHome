@@ -1,0 +1,46 @@
+﻿@model Appointment
+@{
+    ViewData["Title"] = "Reschedule";
+}
+<div class="page-head">
+    <div>
+        <h1>Reschedule Appointment</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><a asp-action="Appointment" asp-controller="Appointment">Appointments</a><span class="sep">/</span><span class="current">Reschedule</span>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Reschedule" asp-controller="Appointment" method="post">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="hl-card mb-4">
+                <div class="hl-card-head"><h2>Appointment Reschedule</h2></div>
+                <div class="hl-card-body">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label asp-for="Date">Date</label>
+                            <input asp-for="Date" name="date" class="form-control">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label asp-for="Time">Time</label>
+                            <input asp-for="Time" name="time" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="hl-card">
+                <div class="hl-card-head"><h2>Reschedule</h2></div>
+                <div class="hl-card-body">
+                    <button type="submit" class="btn btn-hl-primary btn-block mb-2">Reschedule Appointment</button>
+                    <a asp-action="Appointment" asp-controller="Appointment" class="btn btn-hl-outline btn-block">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

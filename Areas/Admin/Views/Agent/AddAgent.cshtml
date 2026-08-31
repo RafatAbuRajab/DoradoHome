@@ -1,0 +1,86 @@
+﻿@model AgentVM
+@{
+    ViewData["Title"] = "Add New Agent";
+}
+<div class="page-head">
+    <div>
+        <h1>Add New Agent</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><a asp-action="Agent" asp-controller="Agent">Agents</a><span class="sep">/</span><span class="current">Add New Agent</span>
+        </div>
+    </div>
+</div>
+
+<form asp-action="AddAgent" asp-controller="Agent" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="hl-card mb-4">
+                <div class="hl-card-head"><h2>Agent Details</h2></div>
+                <div class="hl-card-body">
+                    <div class="form-group">
+                        <label asp-for="FirstName">First Name</label>
+                        <input asp-for="FirstName" type="text" class="form-control" placeholder="e.g. John Parker">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName">Last Name</label>
+                        <input asp-for="LastName" type="text" class="form-control" placeholder="e.g. John Parker">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label asp-for="Email">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="john.parker@homeland.com">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label asp-for="Phone">Phone</label>
+                            <input asp-for="Phone" type="text" class="form-control" placeholder="+1 (213) 555-0100">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label asp-for="Salary">Salary</label>
+                            <input asp-for="Salary" class="form-control" placeholder="550">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label asp-for="Password">Password</label>
+                            <input asp-for="Password" type="password" class="form-control" style="width:100%" placeholder="Notice the Agent to Change It">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="hl-card mb-4">
+                <div class="hl-card-head"><h2>Profile Photo</h2></div>
+                <div class="hl-card-body text-center">
+                    <img src="~/assets/images/person_1.jpg" id="previewImage" class="avatar-md mb-3" style="width:90px;height:90px;">
+                    <div class="input-group mb-3">
+                        <input asp-for="Img" type="file" class="form-control" id="imageInput" accept="image/*" hidden>
+                        <label asp-for="Img" style="margin-left:70px" class="input-prepend btn btn-outline-primary" for="imageInput">Upload Photo</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hl-card">
+                <div class="hl-card-head"><h2>Save Agent</h2></div>
+                <div class="hl-card-body">
+                    <button type="submit" class="btn btn-hl-primary btn-block mb-2">Save Agent</button>
+                    <a asp-action="Agent" asp-controller="Agent" class="btn btn-hl-outline btn-block">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    const imageInput = document.getElementById("imageInput");
+    const previewImage = document.getElementById("previewImage");
+
+    imageInput.addEventListener("change", function () {
+
+        if (this.files.length > 0) {
+
+            previewImage.src = URL.createObjectURL(this.files[0]);
+
+        }
+
+    });
+</script>      

@@ -1,0 +1,26 @@
+﻿@model Offer
+@{
+    ViewData["Title"] = "Offer Rejected";
+}
+<div class="row justify-content-center text-center mb-4">
+    <div class="col-md-8">
+        <span class="stat-icon bg-2 mb-3" style="width:84px;height:84px;font-size:2.4rem;border-radius:50%;"><span class="icon-close2"></span></span>
+        <h1 class="mb-2">Offer Declined</h1>
+        <p class="row-sub mb-1">You've declined the offer on <strong class="text-black">@Model.Property?.Name</strong> from @Model.Employee?.FullName.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="hl-card mb-4">
+            <div class="hl-card-body">
+                <p class="row-sub mb-0">Your agent has been notified. If this was a mistake or you'd like to discuss different terms, you can reach out to @Model.Employee?.FullName directly, or keep browsing for other properties that might be a better fit.</p>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a asp-action="Index" asp-controller="Home" asp-area="" class="btn btn-hl-outline mr-2">Browse More Properties</a>
+            <a asp-action="MyAppointments" asp-controller="Appointment" class="btn btn-hl-primary">Back to My Appointments</a>
+        </div>
+    </div>
+</div>

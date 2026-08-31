@@ -1,0 +1,108 @@
+﻿@model List<Appointment>
+@{
+    ViewData["Title"] = "Appointments";
+}
+<div class="page-head">
+    <div>
+        <h1>Appointments</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Index" asp-controller="Home" asp-area="">Home</a><span class="sep">/</span><a asp-action="AgentDashboard" asp-controller="Dashboard">Dashboard</a><span class="sep">/</span><span class="current">Appointments</span>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-sm-6 col-xl-3 mb-3 mb-xl-0">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-4"><span class="icon-hourglass-half"></span></span>
+            <div><div class="stat-value">@Model.Where(x => x.Status == AppointmentStatus.Pending).Count()</div>
+            <div class="stat-label">Needs Your Response</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-3 mb-xl-0">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-3"><span class="icon-check-circle"></span></span>
+            <div><div class="stat-value">@Model.Where(x => x.Status == AppointmentStatus.Confirmed).Count()</div>
+            <div class="stat-label">Confirmed</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-1"><span class="icon-calendar"></span></span>
+            @{
+                var today = DateOnly.FromDateTime(DateTime.Now);
+            }
+            <div><div class="stat-value">@Model.Where(x => x.Date >= today && x.Date <= today.AddDays(7) && x.Status == AppointmentStatus.Pending).Count()</div>
+                <div class="stat-label">This Week</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-2"><span class="icon-close2"></span></span>
+            <div><div class="stat-value">@Model.Where(x => x.Status == AppointmentStatus.Rejected && x.Date >= today && x.Date <= today.AddDays(7)).Count()</div>
+            <div class="stat-label">Rejected (30d)</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="hl-card">
+            <div class="hl-card-head">
+                <h2>Needs Your Response</h2>
+                <span class="row-sub">Accept or reject &mdash; the client is notified either way</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table hl-table">
+                    <thead><tr><th>Client</th><th>Property</th><th>Requested</th><th>Type</th><th style="width:170px;">Actions</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(x => x.Status == AppointmentStatus.Pending))
+                        {
+                            <tr>
+                                <td><div class="d-flex align-items-center"><img src="@item.Client?.Img" class="avatar-sm mr-3"><div class="row-title">@item.Client?.FullName</div></div></td>
+                                <td>@item.Property?.Name</td>
+                                <td>@item.Date<div class="row-sub">@item.Time</div></td>
+                                <td>@item.appointmentType.ToString()</td>
+                                <td>
+                                    <div class="row-actions">
+                                        <a asp-action="Offer" asp-controller="Appointment" asp-route-id="@item.Id" title="Accept &amp; Create Offer" style="color:var(--hl-success);"><span class="icon-check"></span></a>
+                                        <a asp-action="Reject" asp-controller="Appointment" asp-route-id="@item.Id" class="danger" title="Reject"><span class="icon-close"></span></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="hl-card">
+            <div class="hl-card-head">
+                <h2>Confirmed Schedule</h2>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var item in Model.Where(x => x.Status == AppointmentStatus.Confirmed))
+                {
+                    <div class="d-flex py-3" style="border-bottom:1px solid var(--hl-border);">
+                        <img src="@item.Client?.Img" class="avatar-md mr-3">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <strong style="font-size:.9rem;">@item.Client?.FullName</strong>
+                                <span class="status-pill confirmed">@item.Status</span>
+                            </div>
+                            <div class="row-sub">@item.Date.ToLongDateString(), @item.Time &middot; @item.Notes &middot; @item.Property?.Name</div>
+                        </div>
+                        <div class="row-actions ml-3">
+                            <a asp-action="Reschedule" asp-controller="Appointment" asp-route-id="@item.Id" title="Reschedule"><span class="icon-calendar"></span></a>
+                            <a asp-action="Cancel" asp-controller="Appointment" asp-route-id="@item.Id" class="danger js-confirm-delete" title="Cancel"><span class="icon-close"></span></a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

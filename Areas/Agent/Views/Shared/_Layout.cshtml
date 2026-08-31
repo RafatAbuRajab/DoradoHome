@@ -1,0 +1,106 @@
+﻿@inject UserManager<AppUser> userManager
+@inject AppDbContext db
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var user = await userManager.GetUserAsync(User);
+    var role = (await userManager.GetRolesAsync(user)).FirstOrDefault() ?? "No Role";
+    var employeeImg = db.Employees.Where(e => e.UserId == user.Id).Select(e => e.Img).FirstOrDefault();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["Title"] &mdash; DoradoHome</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,900">
+    <link rel="stylesheet" href="~/assets/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/admin.css">
+</head>
+<body class="admin-body">
+
+    <div class="admin-wrap">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-brand">
+                <a asp-action="Index" asp-controller="Home" asp-area="">DoradoHome<span>.</span></a>
+            </div>
+            <div class="sidebar-scroll">
+                <div class="sidebar-section-title">Main</div>
+                <ul class="admin-nav">
+                    <li class="nav-item @(currentController == "Dashboard" ? "active" : "")">
+                        <a class="nav-link" asp-action="AgentDashboard" asp-controller="Dashboard"><span class="icon-dashboard"></span> Overview</a>
+                    </li>
+                    <li class="nav-item @(currentController == "Listing" ? "active" : "") ">
+                        <a class="nav-link" asp-action="MyListing" asp-controller="Listing"><span class="icon-building"></span> My Listings</a>
+                    </li>
+                    <li class="nav-item @(currentController == "Sale" ? "active" : "") ">
+                        <a class="nav-link" asp-action="SalesHistory" asp-controller="Sale"><span class="icon-usd"></span> Sales</a>
+                    </li>
+                    <li class="nav-item @(currentController == "Rental" ? "active" : "") ">
+                        <a class="nav-link" asp-action="Rentals" asp-controller="Rental"><span class="icon-calendar"></span> Rentals</a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-section-title">Engagement</div>
+                <ul class="admin-nav">
+                    <li class="nav-item @(currentController == "Appointment" ? "active" : "") ">
+                        <a class="nav-link" asp-action="Appointments" asp-controller="Appointment"><span class="icon-clock-o"></span> Appointments</a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-section-title">Account</div>
+                <ul class="admin-nav">
+                    <li class="nav-item @(currentController == "Settings" ? "active" : "")">
+                        <a class="nav-link" asp-action="Setting" asp-controller="Settings" asp-route-Userid="@user.Id"><span class="icon-cog"></span> Settings</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-foot">
+                <a asp-action="logout" asp-controller="User" asp-area="Identity"><span class="icon-sign-out"></span> Log Out</a>
+            </div>
+        </aside>
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <div class="admin-main">
+
+            <header class="admin-topbar">
+                <button class="sidebar-toggle-btn js-sidebar-toggle" type="button" aria-label="Toggle sidebar">
+                    <span class="icon-menu"></span>
+                </button>
+                <div class="topbar-actions">
+                    <div class="dropdown">
+                        <a href="#" class="topbar-user" data-toggle="dropdown">
+                            <img src="@employeeImg" alt="Agent">
+                            <div class="d-none d-md-block">
+                                <div class="u-name">@user.FullName</div>
+                                <div class="u-role">@role</div>
+                            </div>
+                            <span class="icon-chevron-down d-none d-md-inline" style="font-size:.7rem;color:#8a94a6;"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow-sm border-0" style="border-radius:10px;">
+                            <a class="dropdown-item" asp-action="Setting" asp-controller="Settings" asp-route-Userid="@user.Id"><span class="icon-user mr-2"></span>My Profile</a>
+                            <a class="dropdown-item" asp-action="Setting" asp-controller="Settings" asp-route-Userid="@user.Id"><span class="icon-cog mr-2"></span>Account Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-action="logout" asp-controller="User" asp-area="Identity"><span class="icon-sign-out mr-2"></span>Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/admin.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

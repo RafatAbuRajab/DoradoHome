@@ -1,0 +1,118 @@
+﻿@model List<Rental>
+@inject AppDbContext db
+@{
+    ViewData["Title"] = "Rentals";
+}
+<div class="page-head">
+    <div>
+        <h1>Rentals</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><span class="current">Rentals</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-1"><span class="icon-key"></span></span>
+            <div>
+                <div class="stat-value">@Model.Count</div>
+                <div class="stat-label">Total Rentals</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-3"><span class="icon-check-circle"></span></span>
+            <div>
+                <div class="stat-value">@Model.Where(x => x.LeaseStatus == LeaseStatus.Active).Count()</div>
+                <div class="stat-label">Active</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-4"><span class="icon-warning"></span></span>
+            <div>
+                <div class="stat-value">@Model.Where(x => x.LeaseStatus == LeaseStatus.EndingSoon).Count()</div>
+                <div class="stat-label">Ending Soon</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-2"><span class="icon-usd"></span></span>
+            <div>
+                @{
+                    decimal sales = 0;
+                    foreach(var item in Model)
+                    {
+                        if(item.LeaseStatus != LeaseStatus.Expired && item.LeaseStatus != LeaseStatus.Ended)
+                            sales += item.MonthlyRentPrice;
+                    }
+                }
+                <div class="stat-value">$@sales.ToString("#,##0.##")</div>
+                <div class="stat-label">Monthly Rent Volume</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hl-card mb-4">
+    <div class="hl-card-head flex-wrap">
+        <h2>All Rentals</h2>
+        <a asp-action="AddRent" asp-controller="Rental" class="btn btn-hl-primary btn-sm"><span class="icon-plus mr-1"></span>Add New Rental</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table hl-table">
+            <thead>
+                <tr>
+                    <th style="width:36px;"><input type="checkbox" class="js-select-all"></th>
+                    <th>Property</th>
+                    <th>Tenant</th>
+                    <th>Agent</th>
+                    <th>Rent</th>
+                    <th>Lease Period</th>
+                    <th>Status</th>
+                    <th style="width:120px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var propertyimages = db.PropertyImages.Where(x => x.PropertyId == item.PropertyId).Select(x => x.ImageUrl).FirstOrDefault();
+                    <tr>
+                        <td><input type="checkbox" class="js-row-select"></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="@propertyimages" class="row-thumb mr-3">
+                                <div>
+                                    <div class="row-title">@item.Property?.Name</div>
+                                    <div class="row-sub"><span class="icon-room"></span> @item.Property?.City, @item.Property?.State</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><div class="d-flex align-items-center"><img src="@item.Client?.Img" class="avatar-sm mr-2">@item.Client?.FirstName @item.Client?.LastName</div></td>
+                        <td><div class="d-flex align-items-center"><img src="@item.Employee?.Img" class="avatar-sm mr-2">@item.Employee?.FirstName @item.Employee?.LastName</div></td>
+                        <td><strong>$@item.MonthlyRentPrice.ToString("#,##0.##")</strong>/mo</td>
+                        <td>@item.LeaseStartDate.ToString("D") &rarr; @item.LeaseEndDate.ToString("D")<br><span class="row-sub">@(item.LeaseStatus == LeaseStatus.Ended ? 0 : (item.LeaseEndDate - DateTime.Today).Days) days left</span></td>
+                        <td><span class="status-pill @(item.LeaseStatus == LeaseStatus.Active ? "active" :
+                                                       item.LeaseStatus == LeaseStatus.EndingSoon ? "rejected" :
+                                                       item.LeaseStatus == LeaseStatus.Expired ? "sold" : "sold")">
+                                @(item.LeaseStatus == LeaseStatus.Active ? "Active" :
+                                  item.LeaseStatus == LeaseStatus.EndingSoon ? "Ending Soon" :
+                                  item.LeaseStatus == LeaseStatus.Expired ? "Expired" : "Ended")
+                            </span></td>
+                        <td>
+                            <div class="row-actions">
+                                <a asp-action="EditRent" asp-controller="Rental" asp-route-id="@item.Id" title="Edit"><span class="icon-pencil"></span></a>
+                                <a asp-action="EndRent" asp-controller="Rental" asp-route-id="@item.Id" class="danger js-confirm-delete" title="End Lease"><span class="icon-trash-o"></span></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

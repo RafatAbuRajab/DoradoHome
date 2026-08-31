@@ -1,0 +1,90 @@
+﻿@model Rental
+@{
+    ViewData["Title"] = "Add Rent";
+}
+<div class="page-head">
+    <div>
+        <h1>Add Rental</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><a asp-action="Rental" asp-controller="Rental">Rentals</a><span class="sep">/</span><span class="current">Add New</span>
+        </div>
+    </div>
+</div>
+<div asp-validation-summary="All"></div>
+<form asp-action="AddRent" asp-controller="Rental">
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="hl-card mb-4">
+                <div class="hl-card-head"><h2>Rental Details</h2></div>
+                <div class="hl-card-body">
+                    <div class="form-group">
+                        <label>Property</label>
+                        <select asp-for="PropertyId" asp-items="@ViewBag.prop" class="form-control">
+                        </select>
+                        <div class="form-hint">Only properties marked "For Rent" and not currently occupied are listed here.</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label asp-for="LeaseStartDate">Lease Start Date</label>
+                            <input asp-for="LeaseStartDate" type="date" class="form-control">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label asp-for="LeaseEndDate">Lease End Date</label>
+                            <input asp-for="LeaseEndDate" type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label asp-for="MonthlyRentPrice">Monthly Rent (USD)</label>
+                            <input asp-for="MonthlyRentPrice" class="form-control" placeholder="e.g. 2,450" value="2,450">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label asp-for="SecurityDepositPrice">Security Deposit (USD)</label>
+                            <input asp-for="SecurityDepositPrice" class="form-control" placeholder="e.g. 2,450" value="2,450">
+                        </div>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label asp-for="Notes">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Any special terms, conditions, or notes about this lease..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="hl-card mb-4">
+                <div class="hl-card-head"><h2>Assign To</h2></div>
+                <div class="hl-card-body">
+                    <div class="form-group">
+                        <label>Client (Tenant)</label>
+                        <select asp-for="ClientId" asp-items="@ViewBag.client" class="form-control">
+                        </select>
+                        <div class="form-hint">Searching for a new client? <a asp-action="Register" asp-controller="User" asp-area="Identity">Create a client account</a> first.</div>
+                    </div>
+                    <hr>
+                    <div class="form-group mb-0">
+                        <label>Managing Agent</label>
+                        <select asp-for="EmployeeId" asp-items="@ViewBag.Emp" class="form-control">
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hl-card">
+                <div class="hl-card-head"><h2>Status</h2></div>
+                <div class="hl-card-body">
+                    <div class="form-group">
+                        <label>Lease Status</label>
+                        <select asp-for="LeaseStatus" asp-items="Html.GetEnumSelectList<LeaseStatus>()" class="form-control">
+                        </select>
+                        <div class="form-hint">"Ending Soon" and "Expired" are calculated automatically from the lease end date.</div>
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-hl-primary btn-block mb-2">Save Rental</button>
+                    <a asp-action="Rental" asp-controller="Rental" class="btn btn-hl-outline btn-block">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

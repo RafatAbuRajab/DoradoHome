@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["Title"] &mdash; DoradoHome</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,900">
+    <link rel="stylesheet" href="~/assets/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/admin.css">
+
+    <style>
+        /* One-time code input row */
+        .otp-row {
+            display: flex;
+            gap: .6rem;
+            justify-content: center;
+        }
+
+            .otp-row input {
+                width: 48px;
+                height: 56px;
+                text-align: center;
+                font-size: 1.4rem;
+                font-weight: 800;
+                border: 1px solid var(--hl-border);
+                border-radius: 8px;
+                color: #232735;
+            }
+
+                .otp-row input:focus {
+                    outline: none;
+                    border-color: var(--hl-primary);
+                    box-shadow: 0 0 0 3px var(--hl-primary-light);
+                }
+    </style>
+</head>
+<body class="admin-body">
+
+    <div class="auth-shell">
+        <div class="auth-visual">
+            <h1 class="mb-0"><a asp-action="Index" asp-controller="Home" asp-area="" style="color:#fff;text-decoration:none;font-size:2.2rem;"><strong>DoradoHome<span style="color:#f23a2e;">.</span></strong></a></h1>
+            <p class="mt-3 mb-5" style="max-width:380px;opacity:.85;">One account, one login. Access your dashboard whether you're browsing as a client, managing listings as an agent, or running the platform as an admin.</p>
+            <div class="d-flex align-items-center mb-4">
+                <span class="icon-home mr-3" style="font-size:1.4rem;"></span>
+                <span>Clients &mdash; track owned &amp; rented properties</span>
+            </div>
+            <div class="d-flex align-items-center mb-4">
+                <span class="icon-building mr-3" style="font-size:1.4rem;"></span>
+                <span>Agents &mdash; manage your listings &amp; deals</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="icon-cog mr-3" style="font-size:1.4rem;"></span>
+                <span>Admins &mdash; run the whole platform</span>
+            </div>
+        </div>
+
+        @RenderBody()
+    </div>
+
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script>
+        (function () {
+          var roleLabels = { client: 'Client', agent: 'Agent', admin: 'Admin' };
+          var buttons = document.querySelectorAll('.role-btn');
+          var roleInput = document.getElementById('roleInput');
+          var roleLabel = document.getElementById('roleLabel');
+
+          buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var role = btn.getAttribute('data-role');
+              buttons.forEach(function (b) {
+                b.classList.remove('btn-hl-primary');
+                b.classList.add('btn-hl-outline');
+              });
+              btn.classList.remove('btn-hl-outline');
+              btn.classList.add('btn-hl-primary');
+              if (roleInput) roleInput.value = role;
+              if (roleLabel) roleLabel.textContent = roleLabels[role];
+            });
+          });
+        })();
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

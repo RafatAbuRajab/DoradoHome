@@ -1,0 +1,48 @@
+﻿@model List<Property>
+@{
+    ViewData["Title"] = "My Rentals";
+}
+<div class="page-head">
+    <div>
+        <h1>My Rentals</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Index" asp-controller="Home" asp-area="">Home</a><span class="sep">/</span><a asp-action="ClientDashboard" asp-controller="Dashboard">Dashboard</a><span class="sep">/</span><span class="current">My Rentals</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="hl-card">
+            <div class="hl-card-head">
+                <h2>Active &amp; Upcoming Rentals</h2>
+                <span class="row-sub">Time remaining updates automatically</span>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var item in Model)
+                {
+                    foreach(var rental in item.Rentals)
+                    {
+                    <div class="lease-row">
+                        <img src="@item.Img" class="row-thumb lease-thumb">
+                        <div class="lease-info">
+                            <div class="row-title">@item.Name</div>
+                            <div class="row-sub">@item.City, @item.State &middot; $@rental.MonthlyRentPrice.ToString("##,0")/mo</div>
+                        </div>
+                        <div class="lease-progress-wrap">
+                            <span class="row-sub">@((rental.LeaseEndDate - DateTime.Today).Days) days left</span>
+                        </div>
+                        <span class="status-pill @(rental.LeaseStatus == LeaseStatus.Active ? "active" :
+                                                   rental.LeaseStatus == LeaseStatus.EndingSoon ? "rejected" :
+                                                   rental.LeaseStatus == LeaseStatus.Expired ? "sold" : "sold")">
+                                                 @(rental.LeaseStatus == LeaseStatus.Active ? "Active" :
+                                                   rental.LeaseStatus == LeaseStatus.EndingSoon ? "Ending Soon" :
+                                                   rental.LeaseStatus == LeaseStatus.Expired ? "Expired" : "Ended")
+                        </span>
+                    </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

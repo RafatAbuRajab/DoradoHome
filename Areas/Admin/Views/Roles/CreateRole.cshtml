@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Create Role";
+}
+<div class="page-head">
+    <div>
+        <h1>Create Role</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><a asp-action="Roles" asp-controller="Roles">Roles</a><span class="sep">/</span><span class="current">Create Role</span>
+        </div>
+    </div>
+</div>
+
+<form asp-action="CreateRole" asp-controller="Roles" asp-area="Admin">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="hl-card mb-4">
+                <div class="hl-card-head"><h2>Role Details</h2></div>
+                <div class="hl-card-body">
+                    <div class="form-group">
+                        <label>Role Name</label>
+                        <input type="text" name="Role" class="form-control" placeholder="e.g. Support Staff">
+                    </div>
+                    <div class="form-group mb-0">
+                        <label>Description</label>
+                        <textarea class="form-control" name="Description" rows="3" placeholder="Briefly describe what this role is for..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="hl-card">
+                <div class="hl-card-head"><h2>Status</h2></div>
+                <div class="hl-card-body">
+                    <div class="form-group">
+                        <label>Assign to Existing Users</label>
+                        <select asp-items="@ViewBag.Users" name="email" class="form-control">
+                            <option selected>Don't assign yet</option>
+                        </select>
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-hl-primary btn-block mb-2">Save Role</button>
+                    <a asp-action="Roles" asp-controller="Roles" class="btn btn-hl-outline btn-block">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

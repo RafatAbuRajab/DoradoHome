@@ -1,0 +1,68 @@
+/* Schedule a Viewing / Appointment request flow */
+
+.appointment-summary { position: sticky; top: 1.5rem; }
+.appointment-specs { list-style: none; padding: 0; margin: 0; display: flex; gap: 1.2rem; flex-wrap: wrap; }
+.appointment-specs li { font-size: .85rem; color: #6f6f6f; }
+.appointment-specs li span[class^="icon-"] { color: #1f3c88; margin-right: .3rem; }
+
+.appointment-form .form-group label { font-weight: 700; font-size: .88rem; color: #232735; }
+.appointment-form .section-title { font-weight: 800; font-size: 1.05rem; margin-bottom: 1.2rem; padding-bottom: .6rem; border-bottom: 2px solid #f1f1f1; }
+
+.option-card {
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  transition: .15s ease;
+  display: block;
+  height: 100%;
+  text-align: center;
+}
+.option-card:hover { border-color: #1f3c88; }
+.option-card input[type="radio"] { margin-right: .5rem; }
+.option-card input[type="radio"]:checked ~ .option-label { color: #1f3c88; font-weight: 800; }
+.option-card .option-icon { display: block; font-size: 1.5rem; color: #1f3c88; margin-bottom: .5rem; }
+
+.time-slot {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: .6rem .5rem;
+  text-align: center;
+  cursor: pointer;
+  font-size: .85rem;
+  font-weight: 700;
+  color: #6f6f6f;
+  display: block;
+}
+.time-slot:hover { border-color: #1f3c88; }
+.time-slot input[type="radio"] { display: none; }
+.time-slot input[type="radio"]:checked ~ span { color: #1f3c88; }
+.time-slot input[type="radio"]:checked ~ span::before { content: "\2713 "; }
+
+.success-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #eef8e1;
+  color: #7cbd1e;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.next-steps-list { list-style: none; padding: 0; margin: 0; text-align: left; }
+.next-steps-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: .9rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+.next-steps-list li:last-child { border-bottom: none; }
+.next-steps-list .step-num {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #1f3c88; color: #fff; font-weight: 800; font-size: .82rem;
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}

@@ -1,0 +1,74 @@
+﻿@model SettingAgentVM
+@inject UserManager<AppUser> userManager
+@inject AppDbContext db
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var user = await userManager.FindByEmailAsync(Model.Email);
+    var role = await userManager.GetRolesAsync(user);
+    var employee = db.Employees.Where(x => x.UserId == user.Id).FirstOrDefault();
+}
+<div class="page-head">
+    <div>
+        <h1>Settings</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><span class="current">Settings</span>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-3 mb-4">
+        <div class="hl-card">
+            <div class="hl-card-body text-center">
+                <img src="@employee.Img" id="previewImage" class="avatar-md mb-3" style="width:84px;height:84px;">
+                <h5 class="font-weight-bold mb-0">@Model.FirstName @Model.LastName</h5>
+                <div class="row-sub mb-3">@role.FirstOrDefault()</div>
+            </div>
+            <div class="list-group list-group-flush">
+                <a asp-action="Setting" asp-controller="Settings" class="list-group-item list-group-item-action @(currentAction == "Setting" ? "active" : "") border-0 font-weight-bold" style="border-radius:0;"><span class="icon-user mr-2"></span>Profile</a>
+                <a asp-action="Security" asp-controller="Settings" asp-route-id="@employee.Id" class="list-group-item list-group-item-action @(currentAction == "Security" ? "active" : "") border-0 font-weight-bold" style="border-radius:0;"><span class="icon-lock2 mr-2"></span>Security</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="tab-content">
+            <form asp-action="Setting" asp-controller="Settings" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="tab-pane fade show active" id="tab-profile">
+                    <div class="hl-card mb-4">
+                        <div class="hl-card-head"><h2>Profile Information</h2></div>
+                        <div class="hl-card-body">
+                            <div asp-validation-summary="All"></div>
+                            <div class="row">
+                                <div class="col-md-6 form-group"><label asp-for="FirstName">First Name</label><input asp-for="FirstName" class="form-control"></div>
+                                <div class="col-md-6 form-group"><label asp-for="LastName">Last Name</label><input asp-for="LastName" class="form-control"></div>
+                                <div class="col-md-6 form-group"><label asp-for="Email">Email Address</label><input asp-for="Email" class="form-control"></div>
+                                <div class="col-md-6 form-group"><label asp-for="Phone">Phone</label><input asp-for="Phone" class="form-control"></div>
+                            </div>
+                            <input asp-for="Img" type="file" class="form-control" id="imageInput" accept="image/*" hidden>
+                            <label asp-for="Img" class="input-append btn btn-outline-primary" for="imageInput">Change Photo</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-hl-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const imageInput = document.getElementById("imageInput");
+    const previewImage = document.getElementById("previewImage");
+
+    imageInput.addEventListener("change", function () {
+
+        if (this.files.length > 0) {
+
+            previewImage.src = URL.createObjectURL(this.files[0]);
+
+        }
+
+    });
+</script> 

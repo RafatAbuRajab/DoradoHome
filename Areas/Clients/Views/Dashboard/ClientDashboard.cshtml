@@ -1,0 +1,167 @@
+﻿@model List<Property>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="page-head">
+    <div>
+        <h1>Welcome back, @Model.Select(x => x.Client?.FullName).FirstOrDefault()</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Index" asp-controller="Home" asp-area="">Home</a><span class="sep">/</span><a href="dashboard.html">Dashboard</a><span class="sep">/</span><span class="current">Overview</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-1"><span class="icon-building"></span></span>
+            <div>
+                <div class="stat-value">@Model.Count</div>
+                <div class="stat-label">Properties Owned</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-3"><span class="icon-calendar"></span></span>
+            <div>
+                <div class="stat-value">@Model.Where(x => x.IsRented).Count()</div>
+                <div class="stat-label">Active Rentals</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-2"><span class="icon-heart-o"></span></span>
+            <div>
+                <div class="stat-value">@(ViewBag.SavedProperties.Count)</div>
+                <div class="stat-label">Saved Properties</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-4"><span class="icon-calendar"></span></span>
+            <div>
+                <div class="stat-value">@ViewBag.PendingAppointmens</div>
+                <div class="stat-label">Pending Appointments</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>My Rentals</h2>
+                <a asp-action="Rentals" asp-controller="Rental" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var item in Model)
+                {
+                    foreach(var rental in item.Rentals)
+                    {
+                    <div class="lease-row">
+                        <img src="@item.Img" class="row-thumb lease-thumb">
+                        <div class="lease-info">
+                            <div class="row-title">@item.Name</div>
+                            <div class="row-sub">@item.City, @item.State &middot; $@rental.MonthlyRentPrice.ToString("##,0")/mo</div>
+                        </div>
+                        <div class="lease-progress-wrap">
+                            <span class="row-sub">@((rental.LeaseEndDate - DateTime.Today).Days) days left</span>
+                        </div>
+                            <span class="status-pill @(rental.LeaseStatus == LeaseStatus.Active ? "active" :
+                                                       rental.LeaseStatus == LeaseStatus.EndingSoon ? "rejected" :
+                                                       rental.LeaseStatus == LeaseStatus.Expired ? "sold" : "sold")">
+                                                     @(rental.LeaseStatus == LeaseStatus.Active ? "Active" :
+                                                       rental.LeaseStatus == LeaseStatus.EndingSoon ? "Ending Soon" :
+                                                       rental.LeaseStatus == LeaseStatus.Expired ? "Expired" : "Ended")
+                            </span>
+                    </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>Recent Appointments</h2>
+                <a asp-action="MyAppointments" asp-controller="Appointment" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var item in Model)
+                {
+                    foreach (var appointment in item.Appointments)
+                    {
+                        <div class="d-flex align-items-center mb-4">
+                            <img src="@item.Img" class="row-thumb mr-3">
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="row-title" style="font-size:.9rem;">@item.Name</div>
+                                        <div class="row-sub">@appointment.Date &middot; @appointment.Time</div>
+                                    </div>
+                                    <span class="status-pill @(appointment.Status == AppointmentStatus.Confirmed ? "confirmed" :
+                                                               appointment.Status == AppointmentStatus.Pending ? "pending" :
+                                                               appointment.Status == AppointmentStatus.Rejected ? "rejected" : "closed")">
+                                                             @(appointment.Status == AppointmentStatus.Confirmed ? "Confirmed" :
+                                                               appointment.Status == AppointmentStatus.Pending ? "Pending" :
+                                                               appointment.Status == AppointmentStatus.Rejected ? "Rejected" : "Closed")
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>My Properties</h2>
+                <a asp-action="Properties" asp-controller="Property" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var item in Model)
+                {
+                    foreach (var sales in item.Sales)
+                    {
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="@sales.Property?.Img" class="row-thumb mr-3">
+                            <div>
+                                <div class="row-title">@sales.Property?.Name</div>
+                                <div class="row-sub">@sales.Property?.City, @sales.Property?.State &middot; Purchased @sales.SaleDate.ToString("d")</div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>Saved Properties</h2>
+                <a asp-action="Saved" asp-controller="SavedProperty" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="hl-card-body">
+                @foreach (var saved in ViewBag.SavedProperties)
+                {
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="@saved.Img" class="row-thumb mr-3">
+                        <div>
+                            <div class="row-title">@saved.Name</div>
+                            <div class="row-sub">$@saved.Price.ToString("##,0")</div>
+                        </div>
+                    </div> 
+                }
+            </div>
+        </div>
+    </div>
+</div>

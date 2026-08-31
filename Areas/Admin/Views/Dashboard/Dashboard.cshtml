@@ -1,0 +1,92 @@
+﻿@model List<Property>
+@inject AppDbContext db
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="page-head">
+    <div>
+        <h1>Dashboard</h1>
+        <div class="breadcrumb-plain">
+            <a asp-action="Dashboard" asp-controller="Dashboard">Home</a><span class="sep">/</span><span class="current">Dashboard</span>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-1"><span class="icon-building"></span></span>
+            <div>
+                <div class="stat-value">@Model.Count</div>
+                <div class="stat-label">Total Properties</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-3"><span class="icon-check-circle"></span></span>
+            <div>
+                <div class="stat-value">@Model.Where(p => p.IsActive).Count()</div>
+                <div class="stat-label">Active Listings</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-2"><span class="icon-close"></span></span>
+            <div>
+                <div class="stat-value">@Model.Where(p => p.IsActive == false).Count()</div>
+                <div class="stat-label">Inactive Listings</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3 mb-4">
+        <div class="stat-card h-100">
+            <span class="stat-icon bg-4"><span class="icon-usd"></span></span>
+            @{
+                decimal sales = 0;
+                foreach(var item in Model)
+                {
+                    var propsold = await db.Sales.FindAsync(item.Id);
+                    if(propsold != null)
+                    {
+                        sales += item.Price;
+                    }
+                }
+            }
+            <div>
+                <div class="stat-value">$@(sales >= 1000000 ? sales.ToString("##,#").Substring(0,4) + "M" : sales.ToString("#,##0.##"))</div>
+                <div class="stat-label">Revenue (MTD)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <div class="hl-card h-100">
+            <div class="hl-card-head">
+                <h2>Recently Added Properties</h2>
+                <a asp-action="Property" asp-controller="Property" class="btn-hl-outline btn btn-sm">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table hl-table">
+                    <thead><tr><th>Property</th><th>Price</th><th>Status</th><th>Date</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var propertyimages = db.PropertyImages.Where(x => x.PropertyId == item.Id).Select(x => x.ImageUrl).FirstOrDefault();
+                            <tr>
+                                <td><div class="d-flex align-items-center"><img src="@propertyimages" class="row-thumb mr-3"><div><div class="row-title">@item.Name</div><div class="row-sub">@item.Address, @item.State</div></div></div></td>
+                                <td>$@item.Price.ToString("#,##0.##")</td>
+                                <td><span class="status-pill @(item.IsActive ? "active" : "inactive")">@(item.IsActive ? "Active" : "Inactive")</span></td>
+                                <td>@item.ListingDate.ToString("d")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

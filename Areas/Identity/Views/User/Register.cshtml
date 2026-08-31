@@ -1,0 +1,48 @@
+﻿@using DoradoHome.Areas.Identity.Models
+@model RegisterVM
+@{
+    ViewData["Title"] = "Register";
+}
+<div class="auth-form-side">
+    <div class="auth-box">
+        <h2 class="font-weight-bold mb-1">Create your account</h2>
+        <p class="row-sub mb-4">Sign up to get started with DoradoHome.</p>
+        <div asp-validation-summary="ModelOnly"></div>
+        <form asp-action="Register" asp-controller="User" asp-area="Identity">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label asp-for="FirstName">First Name</label>
+                <input asp-for="FirstName" type="text" class="form-control" placeholder="Sarah Mitchell">
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName">Last Name</label>
+                <input asp-for="LastName" type="text" class="form-control" placeholder="Sarah Mitchell">
+            </div>
+            <div class="form-group">
+                <label asp-for="Email">Email Address</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="you@homeland.com">
+            </div>
+            <div class="form-group">
+                <label asp-for="Phone">Phone</label>
+                <input asp-for="Phone" type="text" class="form-control" placeholder="you@homeland.com">
+            </div>
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+            </div>
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="terms">
+                    <label class="custom-control-label" for="terms" style="font-size:.85rem;">I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-hl-primary btn-block">Create Account</button>
+        </form>
+
+        <p class="text-center mt-4 row-sub mb-0">Already have an account? <a asp-action="login" asp-controller="User" style="font-weight:700;">Log in</a></p>
+    </div>
+</div>
