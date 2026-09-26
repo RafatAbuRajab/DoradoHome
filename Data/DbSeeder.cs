@@ -10,6 +10,8 @@ namespace DoradoHome.Data
             await db.Database.MigrateAsync();
 
             await SeedAmenitiesAsync(db);
+
+            await SeedRolesAsync(db);
         }
 
         private static async Task SeedAmenitiesAsync(AppDbContext db)
@@ -41,6 +43,36 @@ namespace DoradoHome.Data
             if (newAmenities.Count > 0)
             {
                 await db.Amenities.AddRangeAsync(newAmenities);
+                await db.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedRolesAsync(AppDbContext db)
+        {
+            string[] defaultRoles =
+            {
+            "Client",
+            "Agent",
+            "Admin"
+            };
+
+            var existingRoles = await db.Roles
+                .Select(r => r.Name)
+                .ToListAsync();
+
+            var newRoles = defaultRoles
+                .Where(name => !existingRoles.Contains(name))
+                .Select(name => new AppRole
+                {
+                    Name = name,
+                    Description = name,
+                    NormalizedName = name.ToUpper()
+                })
+                .ToList();
+
+            if (newRoles.Count > 0)
+            {
+                await db.Roles.AddRangeAsync(newRoles);
                 await db.SaveChangesAsync();
             }
         }

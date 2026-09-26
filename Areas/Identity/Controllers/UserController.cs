@@ -110,7 +110,9 @@ namespace DoradoHome.Areas.Identity.Controllers
                     Phone = model.Phone,
                     IsActive = true
                 };
+
                 await _appDbContext.AddAsync(client);
+                await _userManager.AddToRoleAsync(user, "Client");
                 await _appDbContext.SaveChangesAsync();
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("index", "home", new { area = "" });
